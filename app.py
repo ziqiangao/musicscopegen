@@ -127,6 +127,9 @@ def render_frame(params):
     os.makedirs(path+f'out/{name}/', exist_ok=True)
     img.save(path+f'out/{name}/{str(n)}.png', 'PNG',)
 
+    progress = (n + 1) / num_frames * 100
+    gr.Interface.update("Processing frames: {:.2f}%".format(progress))
+
 def RenderVid(af, n, fps=30):
     (ffmpeg 
      .input(path+f'out/{n}/%d.png', framerate=fps) 
@@ -134,6 +137,7 @@ def RenderVid(af, n, fps=30):
      .output(n + '.mp4', vcodec='libx264', r=fps, pix_fmt='yuv420p', acodec='aac', shortest=None) 
      .run()
      )
+    gr.Interface.download(f"{n}.mp4")
 
 def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
     global iii
@@ -179,25 +183,26 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
         path+f'{name}.mp4'  # Output MP4 filename
     ]
     subprocess.run(ffmpeg_cmd)
+    gr.Interface.download(f"{name}.mp4")
 
 def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidhight=720, oscres=512):
-        resolution = f"{vidwidth}x{vidhight}"
-        res = tuple(map(int, resolution.split('x')))
-        main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
-        return f"Output video '{output_name}.mp4' has been created. Click the link to download."
+    resolution = f"{vidwidth}x{vidhight}"
+    res = tuple(map(int, resolution.split('x')))
+    main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
+    return f"Processing complete. Download your video: <a href='{path}{output_name}.mp4'>{output_name}.mp4</a>"
 
 # Define Gradio interface
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        gr.components.File(label="Upload your MP3 file"),
-        gr.components.Textbox(label="Output Video Name (without extension)"),
-        gr.components.Slider(label="Frames per Second", value=30, minimum=30, maximum=60, step=1),
-        gr.components.Slider(label="Output Video Width", value=1280, minimum=100, maximum=4096),
-        gr.components.Slider(label="Output Video Height", value=720, minimum=100, maximum=2160),
-        gr.components.Slider(label="Number of Visualization Segments", value=512, minimum=128, maximum=2048, step=2)
+        gr.inputs.File(label="Upload your MP3 file"),
+        gr.inputs.Textbox(label="Output Video Name (without extension)"),
+        gr.inputs.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, default=30),
+        gr.inputs.Slider(label="Output Video Width", minimum=100, maximum=4096, default=1280),
+        gr.inputs.Slider(label="Output Video Height", minimum=100, maximum=2160, default=720),
+        gr.inputs.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, default=512)
     ],
-    outputs=[gr.components.Textbox(label="Output")],
+    outputs=gr.outputs.HTML(label="Output"),
     title="MP3 to Video Visualization",
     description="Upload an MP3 file and configure parameters to create a visualization video."
 )
