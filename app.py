@@ -14,7 +14,7 @@ import ffmpeg
 import subprocess
 import traceback
 
-path = '/app/'  # Update with your path
+path = 'C:/Users/ziqia/Downloads/oooo/'  # Update with your path
 
 def getRenderCords(ta: list, idx: int, res: int = 1024, size: tuple = (1280, 720)) -> list:
     i = idx - res // 2
@@ -180,25 +180,24 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
     ]
     subprocess.run(ffmpeg_cmd)
 
-def gradio_interface(audio_file, output_name, fps=30, resolution='1280x720', oscres=512):
-    try:
+def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidhight=720, oscres=512):
+        resolution = f"{vidwidth}x{vidhight}"
         res = tuple(map(int, resolution.split('x')))
         main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
         return f"Output video '{output_name}.mp4' has been created. Click the link to download."
-    except Exception as e:
-        return f"Error processing file: {e}"
 
 # Define Gradio interface
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        gr.inputs.File(label="Upload your MP3 file"),
-        gr.inputs.Textbox(label="Output Video Name (without extension)"),
-        gr.inputs.Number(label="Frames per Second", default=30, min=1, max=60),
-        gr.inputs.Textbox(label="Output Resolution (e.g., 1280x720)", default="1280x720"),
-        gr.inputs.Number(label="Number of Visualization Segments", default=512)
+        gr.components.File(label="Upload your MP3 file"),
+        gr.components.Textbox(label="Output Video Name (without extension)"),
+        gr.components.Slider(label="Frames per Second", value=30, minimum=30, maximum=60, step=1),
+        gr.components.Slider(label="Output Video Width", value=1280, minimum=100, maximum=4096),
+        gr.components.Slider(label="Output Video Height", value=720, minimum=100, maximum=2160),
+        gr.components.Slider(label="Number of Visualization Segments", value=512, minimum=128, maximum=2048, step=2)
     ],
-    outputs=gr.outputs.Textbox(label="Output"),
+    outputs=[gr.components.Textbox(label="Output")],
     title="MP3 to Video Visualization",
     description="Upload an MP3 file and configure parameters to create a visualization video."
 )
