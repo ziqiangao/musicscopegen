@@ -197,10 +197,10 @@ iface = gr.Interface(
     inputs=[
         gr.components.File(label="Upload your MP3 file"),
         gr.components.Textbox(label="Output Video Name (without extension)"),
-        gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, default=30),
-        gr.components.Slider(label="Output Video Width", minimum=100, maximum=4096, default=1280),
-        gr.components.Slider(label="Output Video Height", minimum=100, maximum=2160, default=720),
-        gr.components.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, default=512)
+        gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, value=30),
+        gr.components.Slider(label="Output Video Width", minimum=100, maximum=4096, value=1280),
+        gr.components.Slider(label="Output Video Height", minimum=100, maximum=2160, value=720),
+        gr.components.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, value=512)
     ],
     outputs=gr.components.Video(label="Output"),
     title="MP3 to Video Visualization",
