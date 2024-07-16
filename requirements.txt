@@ -3,3 +3,4 @@ pillow
 mutagen
 Colorthief
 ffmpeg
+numpy<2
