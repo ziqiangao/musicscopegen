@@ -14,7 +14,7 @@ import ffmpeg
 import subprocess
 import traceback
 
-path = 'C:/Users/ziqia/Downloads/oooo/'  # Update with your path
+path = "home/usr/app/"  # Update with your path
 
 def getRenderCords(ta: list, idx: int, res: int = 1024, size: tuple = (1280, 720)) -> list:
     i = idx - res // 2
