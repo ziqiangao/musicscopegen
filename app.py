@@ -155,7 +155,9 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
     # Extract cover image, title, and artist
     cover_img = extract_cover_image(audio_path)
     if cover_img is None:
+        gr.Warning("Mp3 must have a cover image")
         return  # Exit if no cover image found
+        
 
     title, artist = getTitleAndArtist(audio_path)
     dominant_color = getColour(cover_img)
