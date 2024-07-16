@@ -166,16 +166,22 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
 
     # Prepare parameters for each frame
     params = [(n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres) for n in range(num_frames)]
-
+    p = gr.Progress()
     try:
         with Pool(cpu_count()) as pool:
+            
+            num_frames = len(samples_array) // (11025 // fps)
             # Use imap to get progress updates
             for _ in pool.imap_unordered(render_frame, params):
                 iii += 1  # Increment frame count for progress
+                p((iii,num_frames),desc="Rendering Frames")
+                
 
     except Exception as e:
         print('Ended in error: ' + traceback.format_exc())
-
+        gr.Warning("Rendering had errored, program will continue")
+    p = gr.Progress()
+    p(0.5,desc="Finalizing Video")
     print('FFMPEG')
     ffmpeg_cmd = [
         "ffmpeg",
@@ -190,7 +196,6 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
         path+f'{name}.mp4'  # Output MP4 filename
     ]
     subprocess.run(ffmpeg_cmd)
-    gr.Interface.download(f"{name}.mp4")
 
 def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=720, oscres=512):
     resolution = f"{vidwidth}x{vidheight}"
