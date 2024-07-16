@@ -189,7 +189,7 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidhight=72
     resolution = f"{vidwidth}x{vidhight}"
     res = tuple(map(int, resolution.split('x')))
     main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
-    return f"{path}{output_name}.mp4"
+    return f"{output_name}.mp4"
 
 # Define Gradio interface
 iface = gr.Interface(
