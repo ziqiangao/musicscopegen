@@ -189,20 +189,20 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidhight=72
     resolution = f"{vidwidth}x{vidhight}"
     res = tuple(map(int, resolution.split('x')))
     main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
-    return f"Processing complete. Download your video: <a href='{path}{output_name}.mp4'>{output_name}.mp4</a>"
+    return f"{path}{output_name}.mp4"
 
 # Define Gradio interface
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        gr.inputs.File(label="Upload your MP3 file"),
-        gr.inputs.Textbox(label="Output Video Name (without extension)"),
-        gr.inputs.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, default=30),
-        gr.inputs.Slider(label="Output Video Width", minimum=100, maximum=4096, default=1280),
-        gr.inputs.Slider(label="Output Video Height", minimum=100, maximum=2160, default=720),
-        gr.inputs.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, default=512)
+        gr.components.File(label="Upload your MP3 file"),
+        gr.components.Textbox(label="Output Video Name (without extension)"),
+        gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, default=30),
+        gr.components.Slider(label="Output Video Width", minimum=100, maximum=4096, default=1280),
+        gr.components.Slider(label="Output Video Height", minimum=100, maximum=2160, default=720),
+        gr.components.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, default=512)
     ],
-    outputs=gr.outputs.HTML(label="Output"),
+    outputs=gr.components.Video(label="Output"),
     title="MP3 to Video Visualization",
     description="Upload an MP3 file and configure parameters to create a visualization video."
 )
