@@ -95,6 +95,11 @@ def stamp_text(draw, text, font, position, align='left'):
 def linear_interpolate(start, stop, progress):
     return start + progress * (stop - start)
 
+def filecount(p):
+    files = os.listdir()
+    file_count = len(files)
+    return file_count
+
 def render_frame(params):
     n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres = params
     num_frames = len(samples_array) // (11025 // fps)
@@ -127,8 +132,7 @@ def render_frame(params):
     os.makedirs(path+f'out/{name}/', exist_ok=True)
     img.save(path+f'out/{name}/{str(n)}.png', 'PNG',)
 
-    progress = (n + 1) / num_frames * 100
-    gr.Interface.update("Processing frames: {:.2f}%".format(progress))
+    return 1  # Indicate one frame processed
 
 def RenderVid(af, n, fps=30):
     (ffmpeg 
@@ -139,7 +143,7 @@ def RenderVid(af, n, fps=30):
      )
     gr.Interface.download(f"{n}.mp4")
 
-def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
+def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
     global iii
     iii = 0
     # Load the audio file
@@ -165,7 +169,10 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
 
     try:
         with Pool(cpu_count()) as pool:
-            pool.map(render_frame, params)
+            # Use imap to get progress updates
+            for _ in pool.imap_unordered(render_frame, params):
+                iii += 1  # Increment frame count for progress
+
     except Exception as e:
         print('Ended in error: ' + traceback.format_exc())
 
@@ -185,13 +192,13 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres = 512):
     subprocess.run(ffmpeg_cmd)
     gr.Interface.download(f"{name}.mp4")
 
-def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidhight=720, oscres=512):
-    resolution = f"{vidwidth}x{vidhight}"
+def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=720, oscres=512):
+    resolution = f"{vidwidth}x{vidheight}"
     res = tuple(map(int, resolution.split('x')))
     main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
     return f"{output_name}.mp4"
 
-# Define Gradio interface
+# Define Gradio interface with progress bar
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
