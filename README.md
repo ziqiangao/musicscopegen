@@ -1,8 +1,8 @@
 ---
-title: Musicscopegen
-emoji: 🏢
-colorFrom: green
-colorTo: pink
+title: MP3 to Video Visualiser
+emoji: 🎵📺
+colorFrom: yellow
+colorTo: blue
 sdk: gradio
 sdk_version: 4.38.1
 app_file: app.py
