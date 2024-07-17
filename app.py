@@ -213,7 +213,7 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=7
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        gr.components.File(label="Upload your MP3 file", file_count=1, file_types=['mp3'], type='single'),
+        gr.components.File(label="Upload your MP3 file", file_count='single', file_types=['mp3']),
         gr.components.Textbox(label="Output Video Name (without extension)"),
         gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, value=30),
         gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280),
