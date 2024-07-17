@@ -118,9 +118,9 @@ def render_frame(params):
     cov = cover_img.resize((cs, cs))
     img.paste(cov, (((width // 2) - cs // 2), math.floor(height * .1)))
 
-    fontT = ImageFont.truetype(path+'Lexend-Bold.ttf', 50*(min(width, height)/720))//1
-    fontA = ImageFont.truetype(path+'Lexend-Bold.ttf', 40*(min(width, height)/720))//1
-    fontD = ImageFont.truetype(path+'SpaceMono-Bold.ttf', 30*(min(width, height)/720))//1
+    fontT = ImageFont.truetype(path+'Lexend-Bold.ttf', 50*(min(width, height)/720)//1) 
+    fontA = ImageFont.truetype(path+'Lexend-Bold.ttf', 40*(min(width, height)/720)//1) 
+    fontD = ImageFont.truetype(path+'SpaceMono-Bold.ttf', 30*(min(width, height)/720)//1) 
 
     stamp_text(d, title, fontT, totopleft((0, min(width, height) * .3 // -2), width=width, height=height), 'center')
     stamp_text(d, artist, fontA, totopleft((0, min(width, height) * .44 // -2), width=width, height=height), 'center')
