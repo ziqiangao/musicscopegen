@@ -46,10 +46,8 @@ def getTrigger(ad: int, a: list, max: int = 1024) -> int:
 def extract_cover_image(mp3_file):
     audio = MP3(mp3_file, ID3=ID3)
     if audio.tags == None:
-        gr.Error("Mp3 is missing tags")
-        raise Exception("Missing MP3 Tag")
         
-        return None
+        return -1
     for tag in audio.tags.values():
         if isinstance(tag, APIC):
             image_data = tag.data
@@ -165,6 +163,9 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
     if cover_img is None:
         gr.Error("Mp3 must have a cover image")
         return  # Exit if no cover image found
+    else if cover_img === -1:
+        gr.Error("Mp3 is missing tags")
+        return
         
 
     title, artist = getTitleAndArtist(audio_path) 
