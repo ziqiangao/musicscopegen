@@ -47,7 +47,7 @@ def extract_cover_image(mp3_file):
     audio = MP3(mp3_file, ID3=ID3)
     if audio.tags == None:
         gr.Error("Mp3 is missing tags")
-        raise("Missing MP3 Tag")
+        raise Exception("Missing MP3 Tag")
         
         return None
     for tag in audio.tags.values():
