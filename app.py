@@ -215,6 +215,7 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=7
     res = tuple(map(int, resolution.split('x')))
     main(audio_file, output_name, fps=fps, res=res, oscres=oscres, sr=sr)
     time.sleep(5)
+    os.remove("out/")
     return f"{output_name}.mp4"
 
 # Define Gradio interface with progress bar
@@ -227,7 +228,7 @@ iface = gr.Interface(
         gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280, step=2),
         gr.components.Slider(label="Output Video Height", minimum=100, maximum=2000, value=720, step=2),
         gr.components.Slider(label="Number of Visualization Segments", minimum=256, maximum=2048, step=2, value=512),
-        gr.components.Slider(label="Scope Sample Rate", minimum=11025, maximum=44100, step=2, value=11025)
+        gr.components.Slider(label="Scope Sample Rate", minimum=11025, maximum=44100, step=5, value=11025)
     ],
     outputs=gr.components.Video(label="Output"),
     title="MP3 to Video Visualization",
