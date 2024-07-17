@@ -14,6 +14,7 @@ import ffmpeg
 import subprocess
 import traceback
 import time
+import shutil
 
 path = ""  # Update with your path
 
@@ -215,7 +216,8 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=7
     res = tuple(map(int, resolution.split('x')))
     main(audio_file, output_name, fps=fps, res=res, oscres=oscres, sr=sr)
     time.sleep(5)
-    os.remove("out/")
+    
+    shutil.rmtree("out")
     return f"{output_name}.mp4"
 
 # Define Gradio interface with progress bar
