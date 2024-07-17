@@ -222,10 +222,10 @@ iface = gr.Interface(
     inputs=[
         gr.components.File(label="Upload your MP3 file", file_count='single', file_types=['mp3']),
         gr.components.Textbox(label="Output Video Name", value='video'),
-        gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, value=30),
-        gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280),
-        gr.components.Slider(label="Output Video Height", minimum=100, maximum=2000, value=720),
-        gr.components.Slider(label="Number of Visualization Segments", minimum=256, maximum=2048, step=2, value=512)
+        gr.components.Slider(label="Frames per Second", minimum=20, maximum=60, step=1, value=30),
+        gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280, step=2),
+        gr.components.Slider(label="Output Video Height", minimum=100, maximum=2000, value=720, step=2),
+        gr.components.Slider(label="Number of Visualization Segments", minimum=256, maximum=2048, step=2, value=512),
         gr.components.Slider(label="Scope Sample Rate", minimum=11025, maximum=44100, step=2, value=11025)
     ],
     outputs=gr.components.Video(label="Output"),
