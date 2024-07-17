@@ -193,9 +193,9 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
 
     except Exception as e:
         print('Ended in error: ' + traceback.format_exc())
-        gr.Warning("Rendering had errored, program will continue")
+        gr.Info("Rendering had errored, this typically an out of range error")
     p = gr.Progress()
-    p(0.5,desc="Finalizing Video")
+    p(0.5,desc="Compiling video")
     print('FFMPEG')
     ffmpeg_cmd = [
         "ffmpeg",
@@ -230,7 +230,7 @@ iface = gr.Interface(
         gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280, step=2),
         gr.components.Slider(label="Output Video Height", minimum=100, maximum=2000, value=720, step=2),
         gr.components.Slider(label="Number of Visualization Segments", minimum=256, maximum=2048, step=2, value=512),
-        gr.components.Slider(label="Scope Sample Rate", minimum=11025, maximum=44100, step=5, value=11025)
+        gr.components.Slider(label="Scope Sample Rate", minimum=8000, maximum=44100, step=5, value=11025)
     ],
     outputs=gr.components.Video(label="Output"),
     title="MP3 to Video Visualization",
