@@ -163,7 +163,7 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
     if cover_img is None:
         gr.Error("Mp3 must have a cover image")
         return  # Exit if no cover image found
-    else if cover_img === -1:
+    elif cover_img == -1:
         gr.Error("Mp3 is missing tags")
         return
         
