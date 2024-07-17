@@ -13,6 +13,7 @@ import tempfile
 import ffmpeg
 import subprocess
 import traceback
+import time
 
 path = ""  # Update with your path
 
@@ -44,6 +45,11 @@ def getTrigger(ad: int, a: list, max: int = 1024) -> int:
 
 def extract_cover_image(mp3_file):
     audio = MP3(mp3_file, ID3=ID3)
+    if audio == None:
+        gr.Error()
+        raise("Missing MP3 Tag")
+        gr.Error("Mp3 is missing tags")
+        return None
     for tag in audio.tags.values():
         if isinstance(tag, APIC):
             image_data = tag.data
@@ -103,12 +109,12 @@ def filecount(p):
     return file_count
 
 def render_frame(params):
-    n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres = params
-    num_frames = len(samples_array) // (11025 // fps)
+    n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres, sr = params
+    num_frames = len(samples_array) // (sr // fps)
     img = Image.new('RGB', (width, height), normalizeColour(dominant_color))
     d = ImageDraw.Draw(img)
 
-    s = (11025 // fps) * n
+    s = (sr // fps) * n
     if s > len(samples_array): 
         return
     e = center_to_top_left(getRenderCords(samples_array, getTrigger(s, samples_array, max=oscres),res=oscres,size=(width, height)), width=width, height=height)
@@ -145,12 +151,12 @@ def RenderVid(af, n, fps=30):
      )
     gr.Interface.download(f"{n}.mp4")
 
-def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
+def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
     global iii
     iii = 0
     # Load the audio file
     audio_path = file
-    y, sr = librosa.load(audio_path, sr=11025)  # Resample to 11025 Hz
+    y, sr = librosa.load(audio_path, sr=sr)  # Resample to 11025 Hz
     y_u8 = (y * 128 + 128).astype('uint8')
     samples_array = y_u8.tolist()
 
@@ -168,15 +174,15 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
 
     # Frame rendering parameters
     width, height, fps = res[0], res[1], fps
-    num_frames = len(samples_array) // (11025 // fps)
+    num_frames = len(samples_array) // (sr // fps)
 
     # Prepare parameters for each frame
-    params = [(n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres) for n in range(num_frames)]
+    params = [(n, samples_array, cover_img, title, artist, dominant_color, width, height, fps, name, oscres, sr) for n in range(num_frames)]
     p = gr.Progress()
     try:
         with Pool(cpu_count()) as pool:
             
-            num_frames = len(samples_array) // (11025 // fps)
+            num_frames = len(samples_array) // (sr // fps)
             # Use imap to get progress updates
             for _ in pool.imap_unordered(render_frame, params):
                 iii += 1  # Increment frame count for progress
@@ -203,10 +209,10 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
     ]
     subprocess.run(ffmpeg_cmd)
 
-def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=720, oscres=512):
+def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=720, oscres=512, sr=11025):
     resolution = f"{vidwidth}x{vidheight}"
     res = tuple(map(int, resolution.split('x')))
-    main(audio_file, output_name, fps=fps, res=res, oscres=oscres)
+    main(audio_file, output_name, fps=fps, res=res, oscres=oscres, sr=sr)
     time.sleep(5)
     return f"{output_name}.mp4"
 
@@ -219,7 +225,8 @@ iface = gr.Interface(
         gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, value=30),
         gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280),
         gr.components.Slider(label="Output Video Height", minimum=100, maximum=2000, value=720),
-        gr.components.Slider(label="Number of Visualization Segments", minimum=128, maximum=2048, step=2, value=512)
+        gr.components.Slider(label="Number of Visualization Segments", minimum=256, maximum=2048, step=2, value=512)
+        gr.components.Slider(label="Scope Sample Rate", minimum=11025, maximum=44100, step=2, value=11025)
     ],
     outputs=gr.components.Video(label="Output"),
     title="MP3 to Video Visualization",
