@@ -206,7 +206,8 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
         '-r', '30',
         '-pix_fmt', 'yuv420p',
         '-c:a', 'aac',
-        '-shortest',
+        '-shortest', 
+        '-y'
         path+f'{name}.mp4'  # Output MP4 filename
     ]
     subprocess.run(ffmpeg_cmd)
