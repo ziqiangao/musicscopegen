@@ -56,6 +56,8 @@ def getTitleAndArtist(mp3_file):
     audio = MP3(mp3_file, ID3=ID3)
     title = audio.get('TIT2', TIT2(encoding=3, text='Unknown Title')).text[0]
     artist = audio.get('TPE1', TPE1(encoding=3, text='Unknown Artist')).text[0]
+        
+    
     return title, artist
 
 def getColour(img):
@@ -116,9 +118,9 @@ def render_frame(params):
     cov = cover_img.resize((cs, cs))
     img.paste(cov, (((width // 2) - cs // 2), math.floor(height * .1)))
 
-    fontT = ImageFont.truetype(path+'Lexend-Bold.ttf', 50*(min(width, height)//720))
-    fontA = ImageFont.truetype(path+'Lexend-Bold.ttf', 40*(min(width, height)//720))
-    fontD = ImageFont.truetype(path+'SpaceMono-Bold.ttf', 30*(min(width, height)//720))
+    fontT = ImageFont.truetype(path+'Lexend-Bold.ttf', 50*(min(width, height)/720))//1
+    fontA = ImageFont.truetype(path+'Lexend-Bold.ttf', 40*(min(width, height)/720))//1
+    fontD = ImageFont.truetype(path+'SpaceMono-Bold.ttf', 30*(min(width, height)/720))//1
 
     stamp_text(d, title, fontT, totopleft((0, min(width, height) * .3 // -2), width=width, height=height), 'center')
     stamp_text(d, artist, fontA, totopleft((0, min(width, height) * .44 // -2), width=width, height=height), 'center')
@@ -155,11 +157,13 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512):
     # Extract cover image, title, and artist
     cover_img = extract_cover_image(audio_path)
     if cover_img is None:
-        gr.Warning("Mp3 must have a cover image")
+        gr.Error("Mp3 must have a cover image")
         return  # Exit if no cover image found
         
 
-    title, artist = getTitleAndArtist(audio_path)
+    title, artist = getTitleAndArtist(audio_path) 
+    if title == 'Unknown Title' or artist == 'Unknown Artist':
+        gr.Warning('Missing Title or Artist')
     dominant_color = getColour(cover_img)
 
     # Frame rendering parameters
@@ -209,7 +213,7 @@ def gradio_interface(audio_file, output_name, fps=30, vidwidth=1280, vidheight=7
 iface = gr.Interface(
     fn=gradio_interface,
     inputs=[
-        gr.components.File(label="Upload your MP3 file"),
+        gr.components.File(label="Upload your MP3 file", file_count=1, file_types=['mp3'], type='single'),
         gr.components.Textbox(label="Output Video Name (without extension)"),
         gr.components.Slider(label="Frames per Second", minimum=30, maximum=60, step=1, value=30),
         gr.components.Slider(label="Output Video Width", minimum=100, maximum=2000, value=1280),
