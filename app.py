@@ -136,7 +136,7 @@ def render_frame(params):
                                (linear_interpolate(width * .95 // -2, width * .95 // 2, s / len(samples_array)),
                                 height * .95 // -2)],width=width, height=height), fill='#fff', width=10 * height // 360)
 
-    os.makedirs(path+f'out/{name}/', exist_ok=True)
+    
     img.save(path+f'out/{name}/{str(n)}.png', 'PNG',)
 
     return 1  # Indicate one frame processed
@@ -151,7 +151,7 @@ def RenderVid(af, n, fps=30):
     gr.Interface.download(f"{n}.mp4")
 
 def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
-    os.makedirs("out", exist_ok=True)
+    os.makedirs(path+f'out/{name}/', exist_ok=True)
     global iii
     iii = 0
     # Load the audio file
@@ -163,10 +163,10 @@ def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
     # Extract cover image, title, and artist
     cover_img = extract_cover_image(audio_path)
     if cover_img is None:
-        gr.Error("Mp3 must have a cover image")
+        raise gr.Error("Mp3 must have a cover image")
         return  # Exit if no cover image found
     elif cover_img == -1:
-        gr.Error("Mp3 is missing tags")
+        raise gr.Error("Mp3 is missing tags")
         return
         
 
