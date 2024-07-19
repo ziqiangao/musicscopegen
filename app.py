@@ -151,6 +151,7 @@ def RenderVid(af, n, fps=30):
     gr.Interface.download(f"{n}.mp4")
 
 def main(file, name, fps=30, res: tuple=(1280,720), oscres=512, sr=11025):
+    os.makedirs("out" exist_ok=True)
     global iii
     iii = 0
     # Load the audio file
